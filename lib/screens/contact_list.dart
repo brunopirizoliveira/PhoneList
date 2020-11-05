@@ -2,9 +2,17 @@ import 'package:bbank/models/contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bbank/screens/contact_form.dart';
-import 'package:bbank/database/app_database.dart';
+import 'package:bbank/database/dao/contact_dao.dart';
 
-class ContactsList extends StatelessWidget {
+class ContactsList extends StatefulWidget {
+  @override
+  _ContactsListState createState() => _ContactsListState();
+}
+
+class _ContactsListState extends State<ContactsList> {
+
+  final ContactDAO _dao = ContactDAO();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +25,7 @@ class ContactsList extends StatelessWidget {
       body: FutureBuilder<List<Contact>>(
           initialData: List(),
           future:
-              Future.delayed(Duration(seconds: 1)).then((value) => findAll()),
+              Future.delayed(Duration(seconds: 1)).then((value) => _dao.findAll()),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -61,11 +69,15 @@ class ContactsList extends StatelessWidget {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
+          Navigator.of(context)
+              .push(
             MaterialPageRoute(
               builder: (context) => ContactForm(),
             ),
-          );
+
+          ).then((value) {
+            setState(() {});
+          });
         },
         child: Icon(Icons.add),
       ),
